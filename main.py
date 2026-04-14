@@ -73,6 +73,22 @@ def main():
         out = Path(args.output) if args.output else inp.with_name(inp.stem + "_nobg.mp4")
         use_cam = False
 
+    model_path = ensure_model()
+    BaseOptions = mp.tasks.BaseOptions
+    ImageSegmenter = mp.tasks.vision.ImageSegmenter
+    ImageSegmenterOptions = mp.tasks.vision.ImageSegmenterOptions
+    VisionRunningMode = mp.tasks.vision.RunningMode
+
+    opts = ImageSegmenterOptions(
+        base_options=BaseOptions(
+            model_asset_path=model_path,
+            delegate=BaseOptions.Delegate.CPU,
+        ),
+        running_mode=VisionRunningMode.VIDEO,
+        output_category_mask=True,
+        output_confidence_masks=True,
+    )
+
     writer = None
     times = []
     n = 0
